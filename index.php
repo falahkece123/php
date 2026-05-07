@@ -21,7 +21,7 @@ mysqli_query($koneksi, "CREATE TABLE IF NOT EXISTS users (
 // Logika Create
 if (isset($_POST['tambah'])) {
     $nama  = mysqli_real_escape_string($koneksi, $_POST['nama']);
-    $sandi = password_hash($_POST['sandi'], PASSWORD_DEFAULT); // hash password
+    $sandi = mysqli_real_escape_string($koneksi, $_POST['sandi']); // simpan apa adanya
     mysqli_query($koneksi, "INSERT INTO users (nama, sandi) VALUES('$nama', '$sandi')");
     header("Location: index.php");
     exit;
@@ -29,7 +29,7 @@ if (isset($_POST['tambah'])) {
 
 // Logika Delete
 if (isset($_GET['hapus'])) {
-    $id = (int) $_GET['hapus']; // cast ke integer, cegah SQL injection
+    $id = (int) $_GET['hapus'];
     mysqli_query($koneksi, "DELETE FROM users WHERE id=$id");
     header("Location: index.php");
     exit;
@@ -48,7 +48,7 @@ if (isset($_GET['hapus'])) {
         <tr>
             <th>ID</th>
             <th>Nama</th>
-            <th>Sandi (hash)</th>
+            <th>Sandi</th>
             <th>Aksi</th>
         </tr>
         <?php
@@ -57,7 +57,7 @@ if (isset($_GET['hapus'])) {
         <tr>
             <td><?php echo $d['id']; ?></td>
             <td><?php echo htmlspecialchars($d['nama']); ?></td>
-            <td><?php echo substr($d['sandi'], 0, 20) . '...'; ?></td>
+            <td><?php echo htmlspecialchars($d['sandi']); ?></td> <!-- tampil asli -->
             <td>
                 <a href="index.php?hapus=<?php echo $d['id']; ?>"
                    onclick="return confirm('Yakin hapus?')">Hapus</a>
